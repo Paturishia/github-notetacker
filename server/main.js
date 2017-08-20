@@ -6,6 +6,14 @@ const webpackConfig = require('../build/webpack.config')
 const project = require('../project.config')
 const compress = require('compression')
 
+const port  = process.env.PORT || 3001
+const mongoose = require('mongoose')
+const Vinyl = require('./api/models/vinylModel'), //created model loading here
+
+// mongoose instance connection url connection
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://localhost/vinyls-app', { useMongoClient: true });
+
 const app = express()
 app.use(compress())
 
@@ -63,5 +71,8 @@ if (project.env === 'development') {
   // server in production.
   app.use(express.static(path.resolve(project.basePath, project.outDir)))
 }
+
+const routes = require('./api/routes/vinylRoutes') //importing route
+routes(app) //register the route
 
 module.exports = app
